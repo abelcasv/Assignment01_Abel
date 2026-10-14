@@ -3,7 +3,7 @@
 **Course:** Big Data · Academic Year 2026-2027  
 **Degree:** Grado en Ciencia e Ingeniería de Datos  
 **Institution:** Universidad de Las Palmas de Gran Canaria  
-**Student:** Abel *(Surname)*  
+**Student:** Abel Castro Villar  
 
 ---
 
@@ -14,9 +14,9 @@
 
 ### Hypothesis
 All three implementations execute the same arithmetic operations ($2n^3$ FLOPs) and exhibit cubic execution time growth ($O(n^3)$). However, the absolute constant factors differ substantially:
-- **Python** (CPython 3.14): Slowest due to bytecode interpretation, dynamic type checking, and boxed objects.
-- **Java** (OpenJDK 21 HotSpot): Intermediate-to-fast due to just-in-time (JIT) compilation and aggressive runtime loop optimisations.
-- **C** (GCC 16.1 -O3): Highly optimized compiled machine code with direct contiguous row-major memory access and no managed runtime overhead.
+- **Python (CPython 3.14):** Slowest due to bytecode interpretation, dynamic type checking, and boxed objects.
+- **Java (OpenJDK 21 HotSpot):** Intermediate-to-fast due to just-in-time (JIT) compilation and aggressive runtime loop optimisations.
+- **C (GCC 16.1 -O3):** Highly optimized compiled machine code with direct contiguous row-major memory access and no managed runtime overhead.
 
 ---
 
@@ -41,20 +41,20 @@ All experiments were conducted on the same physical host under controlled condit
 
 ## 3. Experimental Protocol
 
-1. **Controlled Shared Inputs**: Identical matrices $A$ and $B$ were generated using a shared seed (42) and stored in CSV format in `data/`. Every language reads these exact files.
-2. **Correctness Validation Before Benchmarking**:
+1. **Controlled Shared Inputs:** Identical matrices $A$ and $B$ were generated using a shared seed (42) and stored in CSV format in `data/`. Every language reads these exact files.
+2. **Correctness Validation Before Benchmarking:**
    - $A \times I_4 = A$ (Identity property)
    - $A \times 0_4 = 0_4$ (Zero matrix property)
    - Known analytical test case ($4 \times 4$ fixed integer matrices)
    - Cross-language reference verification against reference products for $n=100$.
    - Numerical tolerance: absolute tolerance $\epsilon = 10^{-4}$ (accounting for CSV text roundtrip and floating point evaluation order).
-3. **Timing Boundary**: **Kernel only**. Matrix reading, allocation, and output writing are performed outside the timed region.
+3. **Timing Boundary:** **Kernel only.** Matrix reading, allocation, and output writing are performed outside the timed region.
    - Monotonic high-resolution timers: `time.perf_counter()` (Python), `System.nanoTime()` (Java), `QueryPerformanceCounter()` (C).
-4. **Dead-Code Elimination Prevention**: Computation results are consumed via volatile sinks (`volatile` in C and Java, cell extraction in Python) to prevent compiler/JIT removal.
-5. **Warm-up and Repetitions**:
+4. **Dead-Code Elimination Prevention:** Computation results are consumed via volatile sinks (`volatile` in C and Java, cell extraction in Python) to prevent compiler/JIT removal.
+5. **Warm-up and Repetitions:**
    - Warm-up: 1 run (C, Python), 2 runs (Java, to trigger JIT compilation). Warm-ups are strictly excluded from reported statistics.
    - Repetitions: 5 recorded runs per configuration. Central metric: **Median**. Variability: **Interquartile Range (IQR)**.
-6. **Time Budget & Limits**: Declared runtime budget of 120 seconds per run. Python exceeded the budget at $n=750$ (>300 s/rep) and was safely truncated at its largest feasible size ($n=500$). C and Java completed all configurations up to $n=1000$.
+6. **Time Budget & Limits:** Declared runtime budget of 120 seconds per run. Python exceeded the budget at $n=750$ (>300 s/rep) and was safely truncated at its largest feasible size ($n=500$). C and Java completed all configurations up to $n=1000$.
 
 ---
 
