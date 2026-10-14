@@ -1,0 +1,20 @@
+# Generated input data (regenerate: python src/generate_matrices.py)
+data/
+
+# Compiled artefacts
+*.class
+*.exe
+*.o
+
+# Python caches
+__pycache__/
+*.pyc
+
+# IDE / editor
+.vscode/
+.idea/
+*.iml
+
+# OS metadata
+.DS_Store
+Thumbs.db
