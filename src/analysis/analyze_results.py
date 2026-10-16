@@ -1,16 +1,3 @@
-"""Analysis script for Assignment 1 benchmark results.
-
-Loads raw CSV measurements from Python, Java and C benchmarks, computes
-summary statistics (median, IQR), and generates comparison plots and
-a summary table.
-
-Dependencies: pandas, matplotlib, numpy
-
-Usage:
-    cd src/analysis
-    python analyze_results.py
-"""
-
 import os
 import sys
 
@@ -18,9 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
 RESULTS_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "..", "results")
 PLOTS_DIR = os.path.join(RESULTS_DIR, "plots")
@@ -44,9 +28,6 @@ LANGUAGE_COLORS = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Data loading
-# ---------------------------------------------------------------------------
 def load_all_results() -> pd.DataFrame:
     """Load and concatenate all per-language CSV files."""
     frames = []
@@ -66,9 +47,6 @@ def load_all_results() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-# ---------------------------------------------------------------------------
-# Statistics
-# ---------------------------------------------------------------------------
 def compute_summary(df: pd.DataFrame) -> pd.DataFrame:
     """Compute median, IQR for time and memory grouped by (language, n)."""
     summary = df.groupby(["language", "n"]).agg(
@@ -87,9 +65,6 @@ def compute_summary(df: pd.DataFrame) -> pd.DataFrame:
     return summary
 
 
-# ---------------------------------------------------------------------------
-# Plots
-# ---------------------------------------------------------------------------
 def plot_time_comparison(summary: pd.DataFrame) -> None:
     """Median execution time vs matrix size for all languages (log-y)."""
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -173,9 +148,6 @@ def plot_cubic_growth(summary: pd.DataFrame) -> None:
     print("  Saved cubic_analysis.png")
 
 
-# ---------------------------------------------------------------------------
-# Console output
-# ---------------------------------------------------------------------------
 def print_summary_table(summary: pd.DataFrame) -> None:
     """Pretty-print the summary statistics to the console."""
     print("\n" + "=" * 80)
@@ -194,9 +166,6 @@ def print_summary_table(summary: pd.DataFrame) -> None:
                   f"[{int(row['num_reps'])} reps]")
 
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 def main() -> None:
     os.makedirs(PLOTS_DIR, exist_ok=True)
 

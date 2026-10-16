@@ -1,36 +1,18 @@
-"""Python benchmark for triple-loop matrix multiplication.
-
-Measures execution time (kernel only) and peak traced memory for the
-straightforward O(n^3) algorithm using pure Python lists of lists.
-
-Timer:       time.perf_counter (monotonic, high resolution)
-Memory:      tracemalloc peak — Python-managed allocations only;
-             does NOT include the CPython interpreter or C-runtime overhead.
-Warm-up:     1 run per size (excluded from measurements)
-Repetitions: 5 per configuration
-"""
-
 import csv
 import os
 import sys
 import time
 import tracemalloc
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
+
 SIZES = [100, 250, 500, 750, 1000]
 NUM_REPETITIONS = 5
 NUM_WARMUP_RUNS = 1
 VALIDATION_SIZE = 4
-ABSOLUTE_TOLERANCE = 1e-4   # accounts for CSV round-trip and eval-order diffs
+ABSOLUTE_TOLERANCE = 1e-4   
 
 
-# ---------------------------------------------------------------------------
-# Matrix I/O
-# ---------------------------------------------------------------------------
 def load_matrix(filepath: str) -> list[list[float]]:
-    """Load a CSV file into a pure-Python list of lists (row-major)."""
     matrix = []
     with open(filepath, "r") as f:
         reader = csv.reader(f)
@@ -39,18 +21,9 @@ def load_matrix(filepath: str) -> list[list[float]]:
     return matrix
 
 
-# ---------------------------------------------------------------------------
-# Multiplication kernel
-# ---------------------------------------------------------------------------
 def multiply(matrix_a: list[list[float]],
              matrix_b: list[list[float]],
              n: int) -> list[list[float]]:
-    """Compute C = A x B with the straightforward O(n^3) triple-loop.
-
-    Loop order: i-j-k (row-major access for A, column access for B).
-    A local accumulator ``s`` avoids repeated list-index lookups in the
-    innermost loop; the algorithm and complexity are unchanged.
-    """
     result = [[0.0] * n for _ in range(n)]
     for i in range(n):
         for j in range(n):
@@ -61,13 +34,9 @@ def multiply(matrix_a: list[list[float]],
     return result
 
 
-# ---------------------------------------------------------------------------
-# Correctness validation
-# ---------------------------------------------------------------------------
 def matrices_are_close(matrix_a: list[list[float]],
                        matrix_b: list[list[float]],
                        n: int) -> bool:
-    """Element-wise comparison within ABSOLUTE_TOLERANCE."""
     for i in range(n):
         for j in range(n):
             if abs(matrix_a[i][j] - matrix_b[i][j]) > ABSOLUTE_TOLERANCE:
@@ -76,15 +45,6 @@ def matrices_are_close(matrix_a: list[list[float]],
 
 
 def validate_correctness(data_dir: str) -> bool:
-    """Run correctness checks before benchmarking.
-
-    Tests
-    -----
-    1. A x Identity = A
-    2. A x Zero     = Zero
-    3. Known A x B  = expected C  (precomputed by numpy)
-    4. Smallest benchmark size vs numpy reference
-    """
     print("=== Correctness Validation ===")
     n = VALIDATION_SIZE
     all_passed = True
@@ -138,11 +98,7 @@ def validate_correctness(data_dir: str) -> bool:
     return all_passed
 
 
-# ---------------------------------------------------------------------------
-# Benchmark driver
-# ---------------------------------------------------------------------------
 def run_benchmark(data_dir: str, results_dir: str) -> None:
-    """Measure time and memory for each (size, repetition) configuration."""
     os.makedirs(results_dir, exist_ok=True)
     results_file = os.path.join(results_dir, "python_results.csv")
 
@@ -195,9 +151,6 @@ def run_benchmark(data_dir: str, results_dir: str) -> None:
     print(f"\nResults saved to: {os.path.abspath(results_file)}")
 
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 def main() -> None:
     base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             "..", "..")

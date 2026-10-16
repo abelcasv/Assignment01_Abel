@@ -1,9 +1,3 @@
-# ---------------------------------------------------------------------------
-# Makefile for C matrix multiplication benchmark
-# Compiler: GCC (MinGW-w64 on Windows)
-# Flags:    -O3 for optimised code, -std=c11 for modern C
-# ---------------------------------------------------------------------------
-
 CC      = gcc
 CFLAGS  = -Wall -Wextra -O3 -std=c11
 TARGET  = benchmark.exe

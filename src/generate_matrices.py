@@ -1,36 +1,14 @@
-"""Matrix data generator for Assignment 1 benchmarks.
-
-Generates pairs of random n x n matrices as shared CSV files for use across
-Python, Java, and C implementations. Also generates small validation matrices
-(identity, zero, known values) and reference products for correctness checking.
-
-Design:
-  Uses Python's standard library (random, csv) exclusively. This guarantees
-  100% reproducibility across any machine and operating system without
-  relying on external C-extension binaries or DLL dependencies.
-
-Seed:        42 (random.Random(42))
-Value range: [0.0, 1.0) — 64-bit float
-CSV format:  comma-separated, 6 decimal places
-"""
-
 import csv
 import os
 import random
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
+
 SIZES = [100, 250, 500, 750, 1000]
 VALIDATION_SIZE = 4
 SEED = 42
 
 
-# ---------------------------------------------------------------------------
-# Matrix helpers (standard library)
-# ---------------------------------------------------------------------------
 def write_csv_matrix(filepath: str, matrix: list[list[float]]) -> None:
-    """Save a 2D float matrix to a CSV file formatted to 6 decimal places."""
     with open(filepath, "w", newline="") as f:
         writer = csv.writer(f)
         for row in matrix:
@@ -38,7 +16,6 @@ def write_csv_matrix(filepath: str, matrix: list[list[float]]) -> None:
 
 
 def read_csv_matrix(filepath: str) -> list[list[float]]:
-    """Read a 2D float matrix from a CSV file."""
     matrix = []
     with open(filepath, "r") as f:
         reader = csv.reader(f)
@@ -50,7 +27,6 @@ def read_csv_matrix(filepath: str) -> list[list[float]]:
 def reference_multiply(matrix_a: list[list[float]],
                        matrix_b: list[list[float]],
                        n: int) -> list[list[float]]:
-    """Compute C = A x B in double precision for reference validation."""
     c = [[0.0] * n for _ in range(n)]
     for i in range(n):
         for j in range(n):
@@ -61,11 +37,7 @@ def reference_multiply(matrix_a: list[list[float]],
     return c
 
 
-# ---------------------------------------------------------------------------
-# Generators
-# ---------------------------------------------------------------------------
 def generate_random_matrices(data_dir: str, rng: random.Random) -> None:
-    """Generate random matrix pairs A and B for each benchmark size."""
     for n in SIZES:
         matrix_a = [[rng.random() for _ in range(n)] for _ in range(n)]
         matrix_b = [[rng.random() for _ in range(n)] for _ in range(n)]
@@ -80,15 +52,6 @@ def generate_random_matrices(data_dir: str, rng: random.Random) -> None:
 
 
 def generate_validation_matrices(data_dir: str) -> None:
-    """Generate small matrices with known results for correctness testing.
-
-    Creates:
-      - identity_4.csv  : 4x4 identity matrix (A x I = A)
-      - zero_4.csv      : 4x4 zero matrix (A x 0 = 0)
-      - known_A_4.csv   : 4x4 matrix with fixed known values
-      - known_B_4.csv   : 4x4 matrix with fixed known values
-      - expected_C_4.csv: known_A x known_B calculated analytically
-    """
     n = VALIDATION_SIZE
 
     identity = [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
@@ -118,10 +81,6 @@ def generate_validation_matrices(data_dir: str) -> None:
 
 
 def generate_reference_results(data_dir: str) -> None:
-    """Generate reference multiplication results for the smallest benchmark sizes.
-
-    Computes reference product from the exact rounded values in the CSV files.
-    """
     ref_dir = os.path.join(data_dir, "reference")
     os.makedirs(ref_dir, exist_ok=True)
 
@@ -136,9 +95,6 @@ def generate_reference_results(data_dir: str) -> None:
         print(f"  Generated {n}x{n} reference result C = A x B.")
 
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 def main() -> None:
     base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
     data_dir = os.path.join(base_dir, "data")

@@ -1,21 +1,3 @@
-/**
- * C benchmark for triple-loop matrix multiplication.
- *
- * Measures execution time (kernel only) and process memory for the
- * straightforward O(n^3) algorithm using a flat double* array (row-major).
- *
- * Timer:       QueryPerformanceCounter (monotonic, high resolution)
- * Memory:      WorkingSetSize — current process RSS via GetProcessMemoryInfo.
- *              Includes input matrices, output matrix, code and OS overhead.
- * Warm-up:     1 run per size (excluded from measurements)
- * Repetitions: 5 per configuration
- *
- * Usage: benchmark.exe [base_dir]
- *   base_dir defaults to "../.." (assumes execution from src/c/).
- *
- * Compiler flags: gcc -Wall -Wextra -O3 -std=c11 benchmark.c -o benchmark.exe -lpsapi
- */
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,9 +6,7 @@
 #include <windows.h>
 #include <psapi.h>
 
-/* -----------------------------------------------------------------------
- * Configuration
- * ----------------------------------------------------------------------- */
+
 static const int SIZES[] = {100, 250, 500, 750, 1000};
 static const int NUM_SIZES = sizeof(SIZES) / sizeof(SIZES[0]);
 static const int VALIDATION_SIZE = 4;
@@ -34,16 +14,9 @@ static const int NUM_REPETITIONS = 5;
 static const int NUM_WARMUP_RUNS = 1;
 static const double ABSOLUTE_TOLERANCE = 1e-4;
 
-/** Volatile sink — prevents compiler dead-code elimination with -O3. */
 static volatile double result_sink;
 
-/* -----------------------------------------------------------------------
- * Matrix I/O
- * ----------------------------------------------------------------------- */
 
-/**
- * Load an n x n matrix from a CSV file into a flat row-major double array.
- */
 static double* load_matrix(const char* filepath, int n) {
     double* matrix = (double*)malloc((size_t)n * n * sizeof(double));
     if (!matrix) {
@@ -71,19 +44,7 @@ static double* load_matrix(const char* filepath, int n) {
     return matrix;
 }
 
-/* -----------------------------------------------------------------------
- * Multiplication kernel
- * ----------------------------------------------------------------------- */
 
-/**
- * Compute C = A x B with the straightforward O(n^3) triple-loop.
- *
- * Loop order: i-j-k (row-major contiguous access for A, stride-n for B).
- * Storage: flat double* in row-major order — most cache-friendly layout
- * for the access pattern of A in this loop order.
- *
- * C must be pre-allocated and is zeroed internally.
- */
 static void multiply(const double* a, const double* b, double* c, int n) {
     memset(c, 0, (size_t)n * n * sizeof(double));
     for (int i = 0; i < n; i++) {
@@ -97,13 +58,7 @@ static void multiply(const double* a, const double* b, double* c, int n) {
     }
 }
 
-/* -----------------------------------------------------------------------
- * Correctness validation
- * ----------------------------------------------------------------------- */
 
-/**
- * Check if two flat matrices are element-wise close within tolerance.
- */
 static int matrices_are_close(const double* a, const double* b, int n) {
     for (int i = 0; i < n * n; i++) {
         if (fabs(a[i] - b[i]) > ABSOLUTE_TOLERANCE) {
@@ -113,10 +68,7 @@ static int matrices_are_close(const double* a, const double* b, int n) {
     return 1;
 }
 
-/**
- * Run correctness checks before benchmarking.
- * Returns 1 if all tests pass, 0 otherwise.
- */
+
 static int validate_correctness(const char* data_dir) {
     printf("=== Correctness Validation ===\n");
     int all_passed = 1;
@@ -215,14 +167,7 @@ static int validate_correctness(const char* data_dir) {
     return all_passed;
 }
 
-/* -----------------------------------------------------------------------
- * Memory measurement helper
- * ----------------------------------------------------------------------- */
 
-/**
- * Return current process working set (RSS) in MB.
- * Falls back to 0.0 if the API call fails.
- */
 static double get_working_set_mb(void) {
     PROCESS_MEMORY_COUNTERS mem_info;
     if (GetProcessMemoryInfo(GetCurrentProcess(), &mem_info,
@@ -232,9 +177,7 @@ static double get_working_set_mb(void) {
     return 0.0;
 }
 
-/* -----------------------------------------------------------------------
- * Main — benchmark driver
- * ----------------------------------------------------------------------- */
+
 int main(int argc, char* argv[]) {
     const char* base_dir = (argc > 1) ? argv[1] : "../..";
 

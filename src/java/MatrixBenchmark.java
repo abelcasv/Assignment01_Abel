@@ -1,24 +1,3 @@
-/**
- * Java benchmark for triple-loop matrix multiplication.
- *
- * <p>Measures execution time (kernel only) and JVM heap memory for the
- * straightforward O(n^3) algorithm using {@code double[][]} arrays.
- *
- * <ul>
- *   <li>Timer:       {@code System.nanoTime()} (monotonic, high resolution)
- *   <li>Memory:      JVM heap delta —
- *        {@code Runtime.totalMemory() - Runtime.freeMemory()} before/after.
- *        Subject to GC interference; negative values are possible and reported
- *        as-is (not fabricated).
- *   <li>Warm-up:     2 runs per size (JIT compilation)
- *   <li>Repetitions: 5 per configuration
- * </ul>
- *
- * <p>Usage: {@code java MatrixBenchmark [base_dir]}
- * <br>{@code base_dir} defaults to {@code "../.."} (assumes execution from
- * {@code src/java/}).
- */
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,21 +8,15 @@ import java.util.Locale;
 
 public class MatrixBenchmark {
 
-    // ----- Configuration -----------------------------------------------------
     private static final int[] SIZES = {100, 250, 500, 750, 1000};
     private static final int VALIDATION_SIZE = 4;
     private static final int NUM_REPETITIONS = 5;
     private static final int NUM_WARMUP_RUNS = 2;
     private static final double ABSOLUTE_TOLERANCE = 1e-4;
 
-    /** Volatile sink — prevents JIT dead-code elimination of the result. */
     private static volatile double resultSink;
 
-    // ----- Matrix I/O --------------------------------------------------------
 
-    /**
-     * Load an {@code n x n} matrix from a CSV file into a {@code double[][]}.
-     */
     public static double[][] loadMatrix(String filepath, int n)
             throws IOException {
         double[][] matrix = new double[n][n];
@@ -63,15 +36,7 @@ public class MatrixBenchmark {
         return matrix;
     }
 
-    // ----- Multiplication kernel ---------------------------------------------
 
-    /**
-     * Compute C = A x B with the straightforward O(n^3) triple-loop.
-     *
-     * <p>Loop order: i-j-k (row-major access for A, column access for B).
-     * Storage: {@code double[][]} — array of row arrays; rows may not be
-     * contiguous in JVM heap.
-     */
     public static double[][] multiply(double[][] a, double[][] b, int n) {
         double[][] c = new double[n][n];
         for (int i = 0; i < n; i++) {
@@ -86,11 +51,7 @@ public class MatrixBenchmark {
         return c;
     }
 
-    // ----- Correctness validation --------------------------------------------
 
-    /**
-     * Check if two matrices are element-wise close within tolerance.
-     */
     private static boolean matricesAreClose(double[][] a, double[][] b,
                                             int n) {
         for (int i = 0; i < n; i++) {
@@ -103,12 +64,7 @@ public class MatrixBenchmark {
         return true;
     }
 
-    /**
-     * Run correctness checks before benchmarking.
-     *
-     * <p>Tests: (1) A x I = A, (2) A x 0 = 0, (3) known result,
-     * (4) smallest benchmark size vs numpy reference.
-     */
+
     private static boolean validateCorrectness(String dataDir)
             throws IOException {
         System.out.println("=== Correctness Validation ===");
@@ -175,7 +131,6 @@ public class MatrixBenchmark {
         return allPassed;
     }
 
-    // ----- Benchmark driver --------------------------------------------------
 
     public static void main(String[] args) {
         String baseDir = args.length > 0 ? args[0] : "../..";
