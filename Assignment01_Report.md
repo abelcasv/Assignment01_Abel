@@ -3,14 +3,14 @@
 **Course:** Big Data · Academic Year 2026-2027  
 **Degree:** Grado en Ciencia e Ingeniería de Datos  
 **Institution:** Universidad de Las Palmas de Gran Canaria  
-**Author:** Abel Castro Villar 
+**Author:** Abel Castro Villar<br>
 **Assignment:** Assignment 1 — Basic Matrix Multiplication in Different Languages  
 **Date:** October 2026  
 
 ---
 
 ## Abstract
-This empirical study evaluates the computational runtime and memory scalability of the straightforward $O(n^3)$ triple-loop matrix multiplication algorithm implemented across three distinct language environments: Python (interpreted bytecode), Java (JIT-compiled managed runtime), and C (native compiled code). Under strictly controlled input conditions using shared 64-bit floating-point datasets generated with a fixed seed (42), we measure kernel execution times and memory footprints across square matrices of dimensions $n \in \{100, 250, 500, 750, 1000\}$ using 5 repetitions per configuration. Correctness was validated against identity, null, and analytical reference matrices prior to benchmarking. The empirical results demonstrate that all three implementations conform to the theoretical cubic scaling model ($O(n^3)$). However, the absolute constant factors diverge drastically: at $n=500$, Java and C execute the kernel in 0.34 s and 0.77 s respectively, whereas pure Python requires 99.94 s—over two orders of magnitude slower. Due to a declared runtime budget of 120 s per run, Python was halted at its maximum feasible dimension of $n=500$, while Java and C completed up to $n=1000$. These findings illustrate the impact of interpretation overhead, memory layout, and compiler optimisations on high-performance linear algebra workloads.
+This empirical study evaluates the computational runtime and memory scalability of the straightforward $O(n^3)$ triple-loop matrix multiplication algorithm implemented across three distinct language environments: Python (interpreted bytecode), Java (JIT-compiled managed runtime), and C (native compiled code). Under strictly controlled input conditions using shared 64-bit floating-point datasets generated with a fixed seed (42), we measure kernel execution times and memory footprints across square matrices of dimensions $n \in \{100, 250, 500, 750, 1000\}$ using 5 repetitions per configuration. Correctness was validated against identity, null, and analytical reference matrices prior to benchmarking. The empirical results demonstrate that all three implementations conform to the theoretical cubic scaling model ($O(n^3)$). However, the absolute constant factors diverge drastically: at $n=500$, Java and C execute the kernel in 0.34 s and 0.77 s respectively, whereas pure Python requires 99.94 s over two orders of magnitude slower. Due to a declared runtime budget of 120 s per run, Python was halted at its maximum feasible dimension of $n=500$, while Java and C completed up to $n=1000$. These findings illustrate the impact of interpretation overhead, memory layout, and compiler optimisations on high-performance linear algebra workloads.
 
 ---
 
