@@ -218,8 +218,10 @@ All source code was executed locally on the documented hardware, raw measurement
 ## 8. References and Materials
 
 ### 8.1 Reproducibility Package
-All source code, input generation scripts, test suites, raw CSV measurements, and analysis pipelines are available in the project repository:
-**GitHub Repository:** https://github.com/abelcasv/Assignment01_Abel
+All source code, input generation scripts, test suites, raw CSV measurements, and plotting pipelines are available directly within this repository:
+- Source code and benchmark kernels: [`src/`](src/)
+- Raw experimental measurements and summary data: [`results/`](results/)
+- Step-by-step reproduction instructions: [`README.md`](README.md)
 
 ### 8.2 References
 1. Hennessy, J. L., & Patterson, D. A. (2019). *Computer Architecture: A Quantitative Approach* (6th ed.). Morgan Kaufmann.
