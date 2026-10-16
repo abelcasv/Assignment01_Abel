@@ -5,7 +5,6 @@
 **Institution:** Universidad de Las Palmas de Gran Canaria  
 **Author:** Abel Castro Villar  
 **Assignment:** Assignment 1 — Basic Matrix Multiplication in Different Languages  
-**GitHub Repository:** https://github.com/abelcasv/Assignment01_Abel  
 **Date:** October 2026  
 
 ---
