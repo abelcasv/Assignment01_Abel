@@ -83,20 +83,39 @@ All experiments were conducted on the same physical host under controlled condit
 *Note on Memory Metrics: The memory quantities measure different runtime dimensions and must not be compared directly as identical. C measures whole-process Working Set (RSS); Java measures JVM heap difference before/after multiplication; Python measures Python-managed heap allocations via tracemalloc.*
 
 > **For the full scientific analysis, scalability plots, and theoretical discussion, see the research report:**  
-> 📄 [Assignment01_Report.md](Assignment01_Report.md)
+> 📄 [Assignment01_Report.md](Assignment01_Report.md) (or the compiled PDF: `Assignment01_Castro_Report.pdf`)
 
 ---
 
 ## 5. How to Reproduce
 
-### Step 1: Generate Datasets
+### Prerequisites
+- **Python 3.10+**: Core benchmark and data generation scripts (Steps 1–4) use **only the standard library** (`random`, `csv`, `time`, `tracemalloc`) with zero external dependencies. The analysis pipeline (Step 5) requires:
+  ```bash
+  pip install pandas matplotlib numpy
+  ```
+- **Java Development Kit (JDK 21+)**: Ensure `javac` and `java` are available on your system `PATH`.
+- **C Compiler (GCC C11+)**:
+  - Linux: standard `gcc` (link `-lm`).
+  - Windows: GCC via MSYS2 UCRT64 / MinGW-w64 (links `-lpsapi`).
+
+> **Note for Windows (MSYS2):** If `gcc` is not recognized in your PowerShell window, add MSYS2 to your session PATH:
+> ```powershell
+> $env:PATH = "C:\msys64\ucrt64\bin;$env:PATH"
+> ```
+
+---
+
+### Step 1: Generate Shared Datasets
 ```powershell
-py src/generate_matrices.py
+python src/generate_matrices.py
+# (On Windows, you can also run: py src/generate_matrices.py)
 ```
 
 ### Step 2: Run Python Benchmark
 ```powershell
-py src/python/benchmark.py
+python src/python/benchmark.py
+# (On Windows, you can also run: py src/python/benchmark.py)
 ```
 
 ### Step 3: Compile and Run Java Benchmark
@@ -113,7 +132,8 @@ gcc -Wall -Wextra -O3 -std=c11 src/c/benchmark.c -o src/c/benchmark.exe -lpsapi
 
 ### Step 5: Generate Summary Statistics and Plots
 ```powershell
-py src/analysis/analyze_results.py
+python src/analysis/analyze_results.py
+# (On Windows, you can also run: py src/analysis/analyze_results.py)
 ```
 
-Outputs will be saved to `results/summary.csv` and `results/plots/`.
+All aggregated statistics will be saved to `results/summary.csv` and visual figures to `results/plots/`.
